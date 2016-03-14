@@ -6,6 +6,7 @@
 
     <div class="footer-col-wrapper">
       <div class="footer-col  footer-col-1">
+        <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
         <p>Last updated: {{ site.time | date: "%B %-d %Y %R" }}</p>
 
         {% if site.email %}
