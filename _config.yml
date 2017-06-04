@@ -20,3 +20,15 @@ permalink: '/:title/'
 markdown: kramdown
 exclude:
     - README.md
+    - Gemfile
+    - Gemfile.lock
+
+timezone: America/New_York
+
+defaults:
+    -
+        scope:
+            path: ''
+        values:
+            layout: presentation
+
