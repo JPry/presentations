@@ -31,4 +31,10 @@ defaults:
             path: ''
         values:
             layout: presentation
-
+            local_js: false
+    -
+        scope:
+            path: ''
+            type: drafts
+        values:
+            local_js: true
