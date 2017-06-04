@@ -5,10 +5,16 @@ description: >
   the [WordPress REST API](http://v2.wp-api.org) to load slides from a remote site.
   [Remark](http://remarkjs.com/) is used to convert the slides from Markdown to pretty content.
   Curious about how it works? Check out the [repository on GitHub](https://github.com/JPry/presentations).
-baseurl: "/presentations" # the subpath of your site, e.g. /blog/
-url: "http://jpry.github.io" # the base hostname & protocol for your site
+
+# the subpath of your site, e.g. /blog/
+baseurl: "/presentations"
+
+# the base hostname & protocol for your site
+url: "http://jpry.github.io"
+
 twitter_username: JPry
 github_username:  JPry
+permalink: '/:title/'
 
 # Build settings
 markdown: kramdown
