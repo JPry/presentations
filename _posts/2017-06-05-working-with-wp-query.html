@@ -125,8 +125,7 @@ endwhile;
 * `orderby` = `rand`
 * `posts_per_page` = `-1`
 * `showposts` (deprecated)
-* `get_posts()`
-* `query_posts()`
+* `post__not_in`
 ]
 .footnote[See [all of the options](https://codex.wordpress.org/Class_Reference/WP_Query#Pagination_Parameters) in the Codex.]
 ---
@@ -135,6 +134,19 @@ endwhile;
 ### Creating a Custom Query
 ### Common Parameters
 ### Parameters to avoid
+### Functions to avoid
+]
+.right-column[
+* `get_posts()`
+* `query_posts()`
+]
+---
+.left-column[
+### Common Uses
+### Creating a Custom Query
+### Common Parameters
+### Parameters to avoid
+### Functions to avoid
 ### Caching
 ]
 .right-column[
@@ -194,6 +206,22 @@ function jpry_pre_get_posts( $query ) {
 		}
 }
 ```
+```php
+function jpry_pre_get_posts( $query ) {
+		if ( ! $query->is_main_query() || $query->is_admin || $query->is_singular ) {
+			return;
+		}
+
+		// Remove pagination
+		$query->set( 'nopaging', true );
+		$query->set( 'post_per_page', 50 );
+		$query->set( 'no_found_rows', true );
+
+		// Order by menu_order
+		$query->set( 'orderby', 'menu_order' );
+		$query->set( 'order', 'ASC' );
+}
+```
 ]
 ---
 .left-column[
@@ -225,52 +253,14 @@ $query = new WP_Query( array(
 ) );
 ```
 ]
-
-
+---
+template: inverse
+# Questions?
 ---
 
-exclude: true
-.left-column[
-### Common Uses
-
-### Creating a Custom Query
-
-### Modifying the Main Query
-]
-.right-column[
-* `pre_get_posts` filter
-```php
-// Set pagination to 20 posts per page.
-add_action( 'pre_get_posts', 'jpry_pre_get_posts' );
-function jpry_pre_get_posts( $query ) {
-		if ( $query->is_main_query() && ! is_admin() ) {
-			$query->set( 'posts_per_page', 20 );
-		}
-}
-```
-]
-
-
 
 ???
-```php
-$query = new WP_Query();
-if ( $query->have_posts() ) {
-	while ( $query->have_posts() ) {
-		$query->the_post();
-	}
-}
-```
 
-???
-Things to cover:
-* Basic explanation of WP_Query
-* How does WP use it natively
-* How to use it yourself
- * How to pass parameters
- * Advanced queries (meta/taxonomy)
- * Pitfalls
- * How to cache
 
 Questions to answer:
 * Why is `wp_reset_postdata()` needed?
