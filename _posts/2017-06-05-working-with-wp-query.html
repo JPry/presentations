@@ -1,0 +1,296 @@
+---
+layout: presentation-local
+title: Working with WP_Query
+slug: working-with-wp-query
+---
+name: main
+layout: true
+---
+class: center
+name: main_center
+layout: true
+---
+class: middle, inverse, center
+name: inverse
+layout: true
+---
+template: inverse
+
+# Working with WP_Query
+
+
+---
+layout: false
+name: basics
+
+.center[
+## Basics
+]
+--
+.left-column[
+### What is `WP_Query` used for?
+]
+.right-column[
+**Short version:** Handles all of the logic for retrieving post.red[*] objects from the database.
+
+**Long version:** You're about to find out 😁
+]
+
+.footnote[.red[*] Post-_type_ objects, not only posts.]
+---
+template: basics
+
+.left-column[
+### What is `WP_Query` used for?
+### How is it used?
+]
+.right-column[
+```php
+if ( have_posts() ):
+	while ( have_posts() ) : the_post();
+		// Your template code
+	endwhile;
+endif;
+```
+]
+---
+layout: true
+name: custom
+
+.center[
+## Custom Queries
+]
+---
+template: custom
+---
+template: custom
+
+.left-column[
+### Common Uses
+]
+.right-column[
+* Showing posts in a sidebar or footer
+* Showing related posts
+* Showing CPT data
+]
+---
+.left-column[
+### Common Uses
+### Creating a Custom Query
+]
+.right-column[
+* Determine what arguments you need
+* Create a new `WP_Query` object
+```php
+$my_query = new WP_Query( array(
+		'post_type'      => 'some_cpt',
+		'posts_per_page' => 5,
+) );
+```
+* Run your loop
+```php
+while ( $my_query->have_posts() ) : $my_query->the_post();
+		// Template code here
+endwhile;
+*wp_reset_postdata();
+```
+* **Reset WordPress globals with `wp_reset_postdata()`**
+]
+
+???
+* Why is `wp_reset_postdata()` needed?
+* When is `wp_reset_postdata()` needed?
+---
+.left-column[
+### Common Uses
+### Creating a Custom Query
+### Common Parameters
+]
+.right-column[
+* `posts_per_page` - Number of posts to show at once
+* `cat` - Limit posts to a particular category
+* `post_type` - Limit posts to one or more post types
+* `order` - How to order posts (ascending or descending)
+* `orderby` - What data to use to order the posts
+]
+.footnote[See [all of the options](https://codex.wordpress.org/Class_Reference/WP_Query#Pagination_Parameters) in the Codex.]
+---
+.left-column[
+### Common Uses
+### Creating a Custom Query
+### Common Parameters
+### Parameters to avoid
+]
+.right-column[
+* `orderby` = `rand`
+* `posts_per_page` = `-1`
+* `showposts` (deprecated)
+* `get_posts()`
+* `query_posts()`
+]
+.footnote[See [all of the options](https://codex.wordpress.org/Class_Reference/WP_Query#Pagination_Parameters) in the Codex.]
+---
+.left-column[
+### Common Uses
+### Creating a Custom Query
+### Common Parameters
+### Parameters to avoid
+### Caching
+]
+.right-column[
+* **NEVER** Cache a `WP_Query` object itself!
+* For more than a handful of posts, cache the IDs.
+
+```php
+$ids = get_transient( 'custom-ids' );
+if ( false === $ids ) {
+		$ids = array( 0 );
+		$query = new WP_Query( array(
+			'posts_per_page'         => 20,
+			'no_found_rows'          => true,
+			'fields'                 => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'ignore_sticky_posts'    => true,
+		) );
+
+		if ( ! empty( $query->posts ) ) {
+			$ids = $query->posts;
+			set_transient( 'custom-ids', $ids, DAY_IN_SECONDS );
+		}
+}
+$query = new WP_Query( array(
+		'post__in'            => $ids,
+		'orderby'             => 'post__in',
+		'ignore_sticky_posts' => true,
+) );
+
+// Do whatever you would normally do with your query here
+```
+]
+---
+layout: true
+name: advanced
+
+.center[
+## Advanced tips
+]
+---
+template: advanced
+---
+.left-column[
+## `pre_get_posts`
+]
+.right-column[
+* Best way to modify queries before they are run.
+* Should be used instead of `query_posts`
+
+```php
+// Set pagination to 20 posts per page.
+add_action( 'pre_get_posts', 'jpry_pre_get_posts' );
+function jpry_pre_get_posts( $query ) {
+		if ( $query->is_main_query() && ! is_admin() ) {
+			$query->set( 'posts_per_page', 20 );
+		}
+}
+```
+]
+---
+.left-column[
+## `pre_get_posts`
+## Special Queries
+]
+.right-column[
+* Taxonomy query
+
+```php
+$query = new WP_Query( array(
+		'post_type' => 'post',
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'people',
+				'field'    => 'slug',
+				'terms'    => 'bob',
+			),
+		),
+) );
+```
+* Meta query
+
+```php
+$query = new WP_Query( array(
+		'post_type'  => 'post',
+		'meta_key'   => 'color',
+		'meta_value' => 'green',
+) );
+```
+]
+
+
+---
+
+exclude: true
+.left-column[
+### Common Uses
+
+### Creating a Custom Query
+
+### Modifying the Main Query
+]
+.right-column[
+* `pre_get_posts` filter
+```php
+// Set pagination to 20 posts per page.
+add_action( 'pre_get_posts', 'jpry_pre_get_posts' );
+function jpry_pre_get_posts( $query ) {
+		if ( $query->is_main_query() && ! is_admin() ) {
+			$query->set( 'posts_per_page', 20 );
+		}
+}
+```
+]
+
+
+
+???
+```php
+$query = new WP_Query();
+if ( $query->have_posts() ) {
+	while ( $query->have_posts() ) {
+		$query->the_post();
+	}
+}
+```
+
+???
+Things to cover:
+* Basic explanation of WP_Query
+* How does WP use it natively
+* How to use it yourself
+ * How to pass parameters
+ * Advanced queries (meta/taxonomy)
+ * Pitfalls
+ * How to cache
+
+Questions to answer:
+* Why is `wp_reset_postdata()` needed?
+* When is `wp_reset_postdata()` needed?
+* Do custom queries add any type of performance hit to the page load time?
+ * Do I need to limit how much data is returned?
+ * Is it better to return as much as possible and then parse it in memory?
+* but I'm interested in using elastic search or other search methodologies and I believe manipulation of this function is part of that process
+
+---
+template: inverse
+
+.rounded[![Jeremy Pry Gravatar](https://www.gravatar.com/avatar.php?gravatar_id=84552f74b71a1a3e6aae380aa9ab3bd3&rating=G&size=200)]
+## Jeremy Pry
+
+https://github.com/JPry
+
+https://twitter.com/JPry
+
+https://facebook.com/jeremy.pry
+---
+
+
