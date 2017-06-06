@@ -1,10 +1,13 @@
 # Site settings
 title: Presentations
 description: >
-  This site is built with [Jekyll](http://jekyllrb.com). Each individual presentation utilizes
-  the [WordPress REST API](http://v2.wp-api.org) to load slides from a remote site.
-  [Remark](http://remarkjs.com/) is used to convert the slides from Markdown to pretty content.
-  Curious about how it works? Check out the [repository on GitHub](https://github.com/JPry/presentations).
+  This site is built with [Jekyll](http://jekyllrb.com). Each individual presentation is capable
+  of utilizing the [WordPress REST API](http://v2.wp-api.org) to load slides from a remote site (even if
+  not all of them actually do). [Remark](http://remarkjs.com/) is used to convert the slides from
+  Markdown to pretty content.
+
+  Curious about how it works? Check out the
+  [repository on GitHub](https://github.com/JPry/presentations).
 
 # the subpath of your site, e.g. /blog/
 baseurl: "/presentations"
