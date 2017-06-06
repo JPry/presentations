@@ -1,6 +1,493 @@
 ---
-layout: presentation
+layout: presentation-local
 title: Diving into the WP REST API
 permalink: /diving-into-the-wp-rest-api/
-remote_id: 221
 ---
+class: middle, inverse, center
+
+# Diving into the WP REST API
+---
+class: middle, inverse
+name: definitions
+
+.center[
+# Definitions
+]
+.left-column[
+# .red.bold[REST]
+# .bold[API]
+]
+---
+template: definitions
+
+.right-column[
+# .red.bold[Re]presentational .red.bold[S]tate .red.bold[T]ransfer
+]
+---
+template: definitions
+
+.right-column[
+# .red.bold[Re]presentational .red.bold[S]tate .red.bold[T]ransfer
+# Platform Independent
+]
+---
+template: definitions
+
+.right-column[
+# .red.bold[Re]presentational .red.bold[S]tate .red.bold[T]ransfer
+# Platform Independent
+# Self-contained
+]
+
+???
+Each request is entirely self-contained. No cookies like WordPress.
+---
+class: middle, inverse
+name: definitions2
+
+.center[
+# Definitions
+]
+.left-column[
+# .bold[REST]
+# .red.bold[API]
+]
+---
+template: definitions2
+
+.right-column[
+# .red.bold[A]pplication .red.bold[P]rogramming .red.bold[I]nterface
+]
+---
+template: definitions2
+
+.right-column[
+# .red.bold[A]pplication .red.bold[P]rogramming .red.bold[I]nterface
+# A set of routines, protocols, and tools for building software and applications.
+]
+
+???
+A pre-determined method of communicating between computers and programs.
+---
+class: middle, inverse, center
+
+# What's the Big Deal?
+# Why is the API necessary?
+
+???
+From Paul: ... but what are the motivations behind moving in this direction? I suppose things like speed are a factor, developing mobile apps perhaps, what else?
+---
+name: reasons
+
+.left-column[
+## Legacy WordPress
+]
+.right-column[
+Classic HTML page generation
+
+- Content is rendered inside HTML tags, and is controlled by theme template files.
+
+- Content is controlled entirely by the theme.
+
+- HTML is regenerated with every page load.
+
+- The WordPress Loop processes every post in the data set.
+
+- Retrieving content requires scraping the HTML page, or parsing XML.
+
+- XML feed data is limited by site settings inaccessible to 3rd parties.
+]
+---
+name: reasons
+
+.left-column[
+## Legacy WordPress
+## REST API
+]
+.right-column[
+Site content is decoupled from the HTML processing.
+
+- Content is accessible without any theme interference.
+
+- Content is returned as a JSON object, which is usable in many different languages.
+
+- Retrieving content requires a simple GET request.
+
+- All content associated with a post is returned.
+]
+---
+class: middle, inverse, center
+
+# REST API Basics
+---
+name: basics
+
+.center[
+# REST API Basics
+]
+---
+template: basics
+
+.left-column[
+## CRUD
+]
+.right-column[
+.red.bold[C]reate
+
+.red.bold[R]ead
+
+.red.bold[U]pdate
+
+.red.bold[D]elete
+]
+---
+template: basics
+
+.left-column[
+## CRUD
+## Endpoints
+]
+.right-column[
+The REST API ships with endpoints to handle the following:
+
+- **Post objects (posts, pages, media):** Display collections of posts, or individual posts.
+
+- **Post types:** Display information about registered post types
+
+- **Post statuses:** Post statuses that are publicly available
+
+- **Taxonomies:** Display collections of taxonomy terms, or individual taxonomies and terms.
+
+- **Users:** Public user information
+
+- **Comments:** Display collections of comments
+
+- **Oembed:** Retrieve embeddable version of site content.
+]
+???
+Only users with published posts are shown
+---
+template: basics
+name: basics_examples
+
+.left-column[
+## CRUD
+## Endpoints
+## Examples
+]
+---
+template: basics_examples
+
+.right-column[
+### Get All posts
+
+    GET /wp-json/wp/v2/posts
+]
+---
+template: basics_examples
+count: false
+
+.right-column[
+### Get All posts
+
+    GET /wp-json/wp/v2/posts
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts'
+$.getJSON( remote_url, function( data ) {
+    console.log( data );
+});
+```
+```jquery
+$.get({
+    url: remote_url,
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+]
+---
+template: basics_examples
+count: false
+
+.right-column[
+### Get All posts
+
+    GET /wp-json/wp/v2/posts
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts'
+$.getJSON( remote_url, function( data ) {
+    console.log( data );
+});
+```
+```jquery
+$.get({
+    url: remote_url,
+    success: function( data ) {
+    console.log( data );
+    }
+});
+```
+```php
+$remote_url = 'http://example.com/wp-json/wp/v2/posts';
+$response = wp_remote_get( $remote_url );
+$data = json_decode( wp_remote_retrieve_body( $response ), true );
+print_r( $data );
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Get single post (requires a post ID).
+
+    GET /wp-json/wp/v2/posts/184
+
+]
+---
+template: basics_examples
+count: false
+
+.right-column[
+### Get single post (requires a post ID).
+
+    GET /wp-json/wp/v2/posts/184
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts/184'
+$.getJSON( remote_url, function( data ) {
+    console.log( data );
+});
+```
+```jquery
+$.get({
+    url: remote_url,
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+]
+---
+template: basics_examples
+count: false
+
+.right-column[
+### Get single post (requires a post ID).
+
+    GET /wp-json/wp/v2/posts/184
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts/184'
+$.getJSON( remote_url, function( data ) {
+    console.log( data );
+});
+```
+```jquery
+$.get({
+    url: remote_url,
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+```php
+$remote_url = 'http://example.com/wp-json/wp/v2/posts/184';
+$response = wp_remote_get( $remote_url );
+$data = json_decode( wp_remote_retrieve_body( $response ), true );
+print_r( $data );
+```
+]
+---
+template: basics_examples
+
+.footnote[.red[*]Requires [authentication](http://v2.wp-api.org/guide/authentication/)]
+
+.right-column[
+### Create a Post.red[*]
+
+    POST /wp-json/wp/v2/posts
+]
+---
+template: basics_examples
+
+.right-column[
+### Create a Post.red[*]
+
+    POST /wp-json/wp/v2/posts
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts';
+var post_data = {
+    title: 'My Awesome REST post!',
+    content: 'Cool REST content. This is easy and fun!',
+    categories: {
+        'category-slug-1',
+        'category-slug-2',
+        1234
+    }
+};
+$.post({
+    url: remote_url,
+    data: post_data,
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Create a Post.red[*]
+
+    POST /wp-json/wp/v2/posts
+
+```php
+$data = array(
+    'title' => 'My Awesome REST post!',
+    'content' => 'Cool REST content. This is easy and fun!',
+    'categories' => array(
+        'category-slug-1',
+        'category-slug-2',
+        1234
+    ),
+);
+$remote_url = 'http://example.com/wp-json/wp/v2/posts';
+$response = wp_remote_post( $remote_url, array( 'body' => $data) );
+$data = json_decode( wp_remote_retrieve_body( $response ), true );
+print_r( $data );
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Update a Post.red[*]
+
+    PUT /wp-json/wp/v2/posts/184
+]
+---
+template: basics_examples
+
+.right-column[
+### Update a Post.red[*]
+
+    PUT /wp-json/wp/v2/posts/184
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts/184';
+var post_data = {
+    content: 'I updated this content with the REST API',
+};
+$.post({
+    url: remote_url,
+    data: post_data,
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Create a Post.red[*]
+
+    POST /wp-json/wp/v2/posts
+
+```php
+$data = array(
+    'body' => array(
+        'content' => 'I updated this content with the REST API',
+    ),
+    'method' => 'PUT', // POST is also OK
+);
+$remote_url = 'http://example.com/wp-json/wp/v2/posts/184';
+$response = wp_remote_request( $remote_url, $data );
+$data = json_decode( wp_remote_retrieve_body( $response ), true );
+print_r( $data );
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Delete a Post.red[*]
+
+    DELETE /wp-json/wp/v2/posts/184
+]
+---
+template: basics_examples
+
+.right-column[
+### Delete a Post.red[*]
+
+    DELETE /wp-json/wp/v2/posts/184
+
+```jquery
+var remote_url = 'http://example.com/wp-json/wp/v2/posts/184';
+$.ajax({
+    url: remote_url,
+    method: 'DELETE',
+    data: {
+        force: true
+    },
+    success: function( data ) {
+        console.log( data );
+    }
+});
+```
+]
+---
+template: basics_examples
+
+.right-column[
+### Delete a Post.red[*]
+
+    DELETE /wp-json/wp/v2/posts
+
+```php
+$data = array(
+    'body' => json_encode( array(
+        'force' => true,
+    ) ),
+    'method' => 'DELETE',
+    'headers' => array(
+        'Content-Type' => 'application/json',
+    ),
+);
+$remote_url = 'http://example.com/wp-json/wp/v2/posts/184';
+$response = wp_remote_request( $remote_url, $data );
+$data = json_decode( wp_remote_retrieve_body( $response ), true );
+print_r( $data );
+```
+]
+---
+.center[
+# Extending the API
+]
+.left-column[
+## Adding fields
+]
+.right-column[
+Let's refer to the [Documentation](http://v2.wp-api.org/extending/modifying/)
+]
+---
+class: middle, inverse, center
+
+# Resources
+
+[Official REST API documentation](http://v2.wp-api.org/)
+
+[Who's using this thing?](https://make.wordpress.org/core/2015/07/23/rest-api-whos-using-this-thing/)
+
+A [google spreadsheet](https://docs.google.com/spreadsheets/d/1V-9s0U407iOR1II6yWOqBboMe9M6J7oeOJmwxpOvd9E/edit#gid=0) with some other people using the API
+
+[Building Themes with the REST API (by Jack Lenox)](http://jacklenox.com/2015/03/30/building-themes-with-the-wp-rest-api-wordcamp-london-march-2015/)
+
+[The code powering this slideshow on GitHub](https://github.com/JPry/presentations/blob/gh-pages/_layouts/presentation.html)
