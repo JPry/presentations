@@ -1,6 +1,234 @@
 ---
-layout: presentation
+layout: presentation-local
 title: Front-end Editing with CMB2
 permalink: /front-end-editing-with-cmb2/
-remote_id: 222
 ---
+class: middle, inverse, center
+
+# Front-end Editing with CMB2
+---
+name: cmb2
+
+.left-column[
+## CMB2
+]
+.right-column[
+CMB2 is a developer's toolkit for building metaboxes, custom fields, and forms for WordPress that will blow your mind.
+
+- Easily create custom meta boxes
+
+- Multiple field types
+
+- Numerous hooks and filters
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+- Displaying a form
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+- Displaying a form
+- Handling the data
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+- Displaying a form
+- Handling the data
+- JS Niceties
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+- Displaying a form
+- Handling the data
+- JS Niceties
+- Nonces
+]
+
+---
+
+.left-column[
+## Things we care about
+]
+.right-column[
+
+- Displaying a form
+- Handling the data
+- JS Niceties
+- Nonces
+- Security
+]
+
+---
+
+.left-column[
+## How it Works
+]
+.right-column[
+
+- Create front-end editing shortcode
+- Register front-end editing form in CMB2
+- Set up the code to display the form
+- Handle front-end form data
+]
+---
+
+### Create shortcode
+
+--
+
+```php
+add_shortcode( 'frontend_form', 'frontend_form' );
+public function frontend_form( $atts = array() ) {
+	// Handler code here.
+}
+```
+
+---
+### Register form in CMB2
+
+--
+
+```php
+add_action( 'cmb2_init', 'frontend_form_register' );
+public function frontend_form_register() {
+	// Create the CMB2 object.
+	$cmb = new_cmb2_box( array(
+		'id'           => 'jpry_front_end_form',
+		'object_types' => array( 'post' ),
+		'hookup'       => false,
+		'save_fields'  => false,
+		// 'cmb_styles'   => false,
+	) );
+
+	// Register our fields.
+	$cmb->add_field( array(
+		'name'       => __( 'Title', 'jpry-front-end-editor' ),
+		'id'         => 'submitted_post_title',
+		'type'       => 'text',
+	) );
+	$cmb->add_field( array(
+		'name'       => __( 'Post Content', 'jpry-front-end-editor' ),
+		'id'         => 'submitted_post_content',
+		'type'       => 'wysiwyg',
+		'options'    => array(
+			'textarea_rows' => 16,
+			'media_buttons' => true,
+		),
+	) );
+}
+```
+
+---
+### Display the form
+
+--
+
+```php
+// Get CMB2 metabox object.
+$post_id = 123;
+$cmb = cmb2_get_metabox( 'metabox_id', $post_id );
+```
+
+--
+
+```php
+// Parse attributes.
+$default_atts = array(
+	'post_status' => 'publish',
+);
+$atts = shortcode_atts( $default_atts, $atts, 'jpry-front-end-editor' );
+```
+
+--
+
+```php
+// Add attributes as hidden fields
+$name = 'atts';
+foreach ( $field_data as $key => $value ) {
+	$cmb->add_hidden_field( array(
+		'field_args' => array(
+			'id'      => "{$name}[{$key}]",
+			'type'    => 'hidden',
+			'default' => $value,
+		),
+	) );
+}
+```
+```
+
+```
+
+---
+### Display the form
+
+```php
+// Initiate our output variable.
+$output = '';
+
+// Get our form.
+$post_id = 123;
+$output .= cmb2_get_metabox_form(
+	$cmb,
+	$post_id,
+	array(
+		'save_button' => __( 'Submit Post', 'jpry-front-end-editor' ),
+	)
+);
+
+echo $output;
+```
+
+---
+### Handle the data
+
+--
+
+```php
+// If no form submission, bail.
+if ( empty( $_POST ) || ! isset( $_POST['object_id'] ) ) {
+	return false;
+}
+```
+
+--
+
+```php
+// Bail if we didn't get a post object back.
+$post = get_post( (int) sanitize_text_field( $_POST['object_id'] ) );
+if ( is_null( $post ) ) {
+	return false;
+}
+```
