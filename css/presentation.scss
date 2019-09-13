@@ -24,6 +24,10 @@ h1, h2, h3 {
 }
 
 .remark-slide-content {
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+
 	h1 {
 		font-size: 3em;
 	}
